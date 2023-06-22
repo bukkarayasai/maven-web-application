@@ -1,0 +1,33 @@
+pipeline
+{
+    agent{
+        label "slave1"
+    }
+    tools{
+        maven "Maven 3.9.2"
+    }
+    triggers{
+        githubpush()
+    }
+    stages{
+        stage('codecheckout'){
+            steps{
+                git 'https://github.com/bukkarayasai/maven-web-application.git'
+            }
+        }
+        stage('buildcode'){
+            steps{
+                sh 'mvn clean package'
+            }
+        }
+        stage('deploycode'){
+            steps{
+                deploy adapters: [tomcat9(credentialsId: '55fe5c01-ba53-403d-a0e4-61fc86d0498c', path: '', url: 'http://35.154.153.5:8080')], contextPath: 'testpipeline-dec', war: '**/*.war'
+            }
+            
+        }
+        
+        
+    }
+    
+}
